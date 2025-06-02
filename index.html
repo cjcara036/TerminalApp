@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terminal Web App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="terminal-window">
+        <div class="terminal-header">
+            <div class="dot red"></div>
+            <div class="dot yellow"></div>
+            <div class="dot green"></div>
+            <span class="title ml-2">Terminal Web App</span>
+        </div>
+        <div class="terminal-body" id="terminalBody">
+            <div class="output-line initial-message">Welcome to Terminal Web App!</div>
+            <div class="output-line initial-message">Type 'help' for available commands. Use Up/Down arrows for history.</div>
+        </div>
+    </div>
+
+    <div class="input-area" id="floatingInputArea">
+        <span class="prompt-display" id="promptText"></span>
+        <div class="cursor-container">
+             <input type="text" id="terminalInput" autocomplete="off" spellcheck="false">
+        </div>
+    </div>
+
+    <script src="./functions/clear.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
