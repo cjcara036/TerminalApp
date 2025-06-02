@@ -16,7 +16,13 @@ A customizable, browser-based terminal application built with HTML, CSS, and van
 
 ## File Structure
 
-.├── index.html              # Main HTML file for the application├── style.css               # CSS styles for the terminal interface├── script.js               # Core JavaScript logic, command dispatcher, helper functions├── functions/              # Directory for command modules│   └── clear.js            # Example command: clears the terminal│   └── (yourCommand.js)    # Placeholder for other custom commands└── README.md               # This file
+.├── index.html              # Main HTML file for the application
+ ├── style.css               # CSS styles for the terminal interface
+ ├── script.js               # Core JavaScript logic, command dispatcher, helper functions
+ ├── functions/              # Directory for command modules
+ │   └── clear.js            # Example command: clears the terminal
+ │   └── (yourCommand.js)    # Placeholder for other custom commands
+ └── README.md               # This file
 ## How to Run
 
 1.  Clone this repository or download the files.
