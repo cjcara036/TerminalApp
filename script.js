@@ -78,7 +78,8 @@ let promptUpdateInterval = null;
 
 // --- Array to hold all command classes ---
 const commandClassesArray = [
-    Clear // Add other command classes here, e.g., Echo, HelpCmd, etc.
+    Clear,
+    Kvstore
 ];
 // --- End of command classes array ---
 
@@ -88,8 +89,76 @@ const commandClassesArray = [
  * @param {string} content - The command line string to parse.
  * @returns {string[]} An array of parsed arguments.
  */
-initialParse("hello test test01:\"Hello World\"")
+function initialParse(content) {
+    if (typeof content !== 'string') {
+        return [];
+    }
+    const args = [];
+    let i = 0;
+    while (i < content.length) {
+        // Skip leading spaces for the next token
+        while (i < content.length && content[i] === ' ') {
+            i++;
+        }
+        if (i === content.length) break; // End of string after spaces
 
+        let tokenStart = i;
+        let currentToken = '';
+
+        // Check if the current position starts a standalone quoted string
+        if (content[i] === '"') {
+            let closingQuoteIndex = -1;
+            // Find the corresponding closing quote
+            for (let k = i + 1; k < content.length; k++) {
+                if (content[k] === '"') {
+                    // TODO: Add handling for escaped quotes if needed in the future (e.g., \")
+                    closingQuoteIndex = k;
+                    break;
+                }
+            }
+
+            if (closingQuoteIndex !== -1) {
+                // A quoted segment is found from i to closingQuoteIndex
+                const charAfterClosingQuote = (closingQuoteIndex + 1 < content.length) ? content[closingQuoteIndex + 1] : undefined;
+                
+                // A quoted string is "standalone" if:
+                // 1. It's preceded by a space or is at the beginning of the input (which is true since we skipped spaces to get to tokenStart=i).
+                // 2. It's followed by a space or is at the end of the input.
+                if (charAfterClosingQuote === ' ' || charAfterClosingQuote === undefined) {
+                    // This is a standalone quoted string. Strip quotes.
+                    currentToken = content.substring(i + 1, closingQuoteIndex);
+                    args.push(currentToken);
+                    i = closingQuoteIndex + 1; // Move past this token
+                    continue; // Proceed to the next token
+                }
+                // If not standalone (e.g., part of `word:"..."` or `"..."word`),
+                // it will be handled by the general token parsing logic below,
+                // which will include the quotes as part of the token.
+            }
+            // If no closing quote, or if it's not standalone, let general parsing handle it.
+        }
+
+        // General token parsing for non-standalone-quoted segments or unquoted segments
+        let inInternalQuotes = false; // Tracks if we are inside quotes *within* the current token being built
+        while (i < content.length) {
+            const char = content[i];
+            if (char === '"') {
+                inInternalQuotes = !inInternalQuotes;
+            }
+            // A token ends at a space, ONLY if we are NOT inside internal quotes.
+            if (char === ' ' && !inInternalQuotes) {
+                break; 
+            }
+            currentToken += char;
+            i++;
+        }
+        
+        if (currentToken.length > 0) { // Push if token is not empty
+            args.push(currentToken);
+        }
+    }
+    return args;
+}
 
 /**
  * Gets the current timestamp in mm/dd/yyyy hh:mm:ss (24hr) format.

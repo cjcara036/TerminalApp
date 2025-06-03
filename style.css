@@ -2,6 +2,11 @@
 html {
     height: 100%;
     overflow: hidden; /* Prevent scrollbars on html element */
+    box-sizing: border-box;
+}
+
+*, *::before, *::after { /* Ensure border-box for all elements, common practice */
+    box-sizing: inherit;
 }
 
 body {
@@ -10,10 +15,9 @@ body {
     color: #FFFFFF;
     display: flex;
     flex-direction: column;
-    min-height: 100vh; /* Full viewport height */
+    height: 100vh; /* Use height instead of min-height for more explicit full viewport height */
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
     overflow: hidden; /* Prevent body scrollbars if terminal fits perfectly */
 }
 
@@ -22,10 +26,11 @@ body {
     border-radius: 0;
     box-shadow: none;
     width: 100%;
-    flex-grow: 1; /* Allows terminal-window to fill space above fixed input bar */
+    flex-grow: 1; /* Allows terminal-window to fill space */
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    overflow: hidden; /* Important: This ensures children don't overflow this container */
+    position: relative; /* Establishes a stacking context, can sometimes help with fixed children issues */
 }
 
 .terminal-header {
@@ -35,8 +40,8 @@ body {
     align-items: center;
     border-top-left-radius: 0;
     border-top-right-radius: 0;
-    flex-shrink: 0;
-    position: relative; /* Ensure it stays above terminal-body content */
+    flex-shrink: 0; /* Prevent header from shrinking */
+    position: relative; 
     z-index: 10;
 }
 
@@ -57,16 +62,18 @@ body {
 }
 
 .terminal-body {
-    flex-grow: 1;
+    flex-grow: 1; /* Allow body to take up remaining vertical space */
     padding: 16px;
-    /* Add padding to the bottom to avoid content being hidden by the floating input bar */
-    /* Approx height of input bar (50px) + bottom offset (16px) + extra space (16px) = ~82px */
-    padding-bottom: 85px;
-    overflow-y: auto;
+    /* Increased padding-bottom slightly as a test. Adjust as needed. */
+    /* This value needs to be enough to clear the height of .input-area + its bottom offset */
+    padding-bottom: 95px; /* Previous was 85px */
+    overflow-y: auto;   /* Enable vertical scrolling */
     font-family: 'Roboto Mono', monospace;
     font-size: 0.9rem;
     line-height: 1.6;
-    background-color: #303030; /* Ensure body matches terminal window */
+    background-color: #303030;
+    min-height: 0; /* Critical for flex items that need to shrink or be sized by flex-grow */
+    box-sizing: border-box; /* Explicitly set, though Tailwind should provide it */
 }
 
 /* Custom Scrollbar Styling (Webkit browsers) */
@@ -90,29 +97,27 @@ body {
     bottom: 16px; /* Distance from the bottom of the viewport */
     left: 50%;
     transform: translateX(-50%);
-    /* MODIFIED: Adjust width to span more of the screen */
-    width: calc(100% - 40px); /* Takes full width minus 20px on each side */
-    min-width: 280px; /* Ensures it doesn't get too small on narrow screens */
-    max-width: 1000px; /* Prevents it from becoming excessively wide on large screens */
-    padding: 10px 20px; /* Padding inside the pill bar */
-    background-color: #4F4F4F; /* Slightly different background for the pill bar */
-    border-radius: 24px; /* Rounded corners for pill shape */
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3), 0 3px 6px rgba(0,0,0,0.2); /* Floating shadow */
+    width: calc(100% - 40px); 
+    min-width: 280px; 
+    max-width: 1000px; 
+    padding: 10px 20px; 
+    background-color: #4F4F4F; 
+    border-radius: 24px; 
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3), 0 3px 6px rgba(0,0,0,0.2); 
     display: flex;
     align-items: center;
     z-index: 100; /* Ensure it's above other content */
-    transition: all 0.3s ease-in-out; /* Smooth transitions for focus/hover if added */
-    box-sizing: border-box; /* Ensures padding and border are included in the element's total width and height */
+    transition: all 0.3s ease-in-out;
+    box-sizing: border-box; 
 }
 
-.input-area:focus-within { /* Style when input inside is focused */
+.input-area:focus-within { 
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.35), 0 4px 8px rgba(0,0,0,0.25);
-    /* background-color: #5a5a5a; */ /* Optional: slightly change color on focus */
 }
 
 
 .prompt-display {
-    color: #A5D6A7; /* Lighter green for prompt in pill bar */
+    color: #A5D6A7; 
     margin-right: 8px;
     white-space: nowrap;
     font-size: 0.9rem;
@@ -130,25 +135,25 @@ body {
 }
 
 .output-line {
-    word-break: break-all;
+    word-break: break-all; /* Help prevent very long strings from breaking layout */
     display: flex;
-    align-items: baseline;
+    align-items: baseline; /* Or 'flex-start' if baseline causes issues with varied content */
     margin-bottom: 4px;
 }
 
 .output-line .prompt-display {
-    color: #81C784; /* Original green for prompts in the output body */
+    color: #81C784; 
 }
 
 .output-line .command-text {
     color: #BDBDBD;
-    margin-left: 2px;
+    margin-left: 2px; /* Small space after prompt in output */
 }
 
 .output-line .output-content {
     color: #FFFFFF;
-    margin-left: 5px;
-    white-space: pre-wrap;
+    margin-left: 5px; /* Space after timestamp/prompt in output */
+    white-space: pre-wrap; /* Preserve whitespace and wrap lines */
 }
 
 .initial-message {
