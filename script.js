@@ -78,8 +78,7 @@ let promptUpdateInterval = null;
 
 // --- Array to hold all command classes ---
 const commandClassesArray = [
-    Clear,
-    Kvstore
+    Clear
 ];
 // --- End of command classes array ---
 
