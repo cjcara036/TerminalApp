@@ -88,59 +88,7 @@ const commandClassesArray = [
  * @param {string} content - The command line string to parse.
  * @returns {string[]} An array of parsed arguments.
  */
-function initialParse(content) {
-    if (typeof content !== 'string') {
-        return [];
-    }
-    const args = [];
-    let currentArg = '';
-    let inQuotes = false;
-
-    for (let i = 0; i < content.length; i++) {
-        const char = content[i];
-
-        if (char === '"') {
-            if (inQuotes) {
-                // Ending a quoted segment
-                if (currentArg.length > 0) { // Push arg even if it's empty inside quotes
-                    args.push(currentArg);
-                } else {
-                    args.push(""); // Push empty string if quotes are empty e.g. ""
-                }
-                currentArg = '';
-                inQuotes = false;
-            } else {
-                // Starting a quoted segment
-                if (currentArg.length > 0) { // Push preceding non-quoted arg
-                    args.push(currentArg);
-                    currentArg = '';
-                }
-                inQuotes = true;
-            }
-        } else if (char === ' ' && !inQuotes) {
-            if (currentArg.length > 0) {
-                args.push(currentArg);
-                currentArg = '';
-            }
-            // Ignore multiple spaces between arguments
-        } else {
-            currentArg += char;
-        }
-    }
-
-    // Add the last argument if any
-    if (currentArg.length > 0) {
-        args.push(currentArg);
-    }
-    
-    // If quotes were opened but not closed, treat the rest as a single argument
-    // This is a common behavior, though can be debated.
-    // For now, the loop structure handles this by adding currentArg at the end.
-    // If inQuotes is still true at the end, it means an unclosed quote.
-    // The currentArg will contain everything after the last opening quote.
-
-    return args;
-}
+initialParse("hello test test01:\"Hello World\"")
 
 
 /**
